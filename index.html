@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,32 +10,74 @@
     <style>
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6; color: #333;
-            padding: 20px; display: flex; flex-direction: column; align-items: center;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        h1 { margin-bottom: 10px; }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
         .controls-container {
-            background: white; padding: 15px 25px; border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
-            display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .control-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-weight: bold; font-size: 0.9em; color: #666; }
-        select, button {
-            padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
+
+        label {
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        select,
         button {
-            background-color: #6c5ce7; color: white; border: none; cursor: pointer;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover { background-color: #5b4bc4; }
+
+        button:hover {
+            background-color: #5b4bc4;
+        }
+
         #chart-wrapper {
-            width: 90%; max-width: 1000px; height: 60vh;
-            background: white; padding: 20px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 1000px;
+            height: 60vh;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
+
 <body>
 
     <h1>La part des femmes dans la Tech</h1>
@@ -62,11 +105,11 @@
     <script>
         // ================= CONFIGURATION (A MODIFIER SELON VOTRE CSV) =================
         // 1. Le chemin vers votre fichier CSV (mettez-le dans le même dossier)
-        const CSV_FILE_PATH = 'data.csv'; 
-        
+        const CSV_FILE_PATH = 'data.csv';
+
         // 2. Les NOMS EXACTS des colonnes dans votre CSV Kaggle
-        const COL_NAME_COMPANY = 'Company';      // Ex: 'Organisation Name', 'Firm'
-        const COL_NAME_FEMALE_PCT = 'FemalePercent'; // Ex: '% Female', 'Women Share'
+        const COL_NAME_COMPANY = 'company';      // Ex: 'Organisation Name', 'Firm'
+        const COL_NAME_FEMALE_PCT = 'percent_female_eng'; // Ex: '% Female', 'Women Share'
         // ==============================================================================
 
 
@@ -82,24 +125,24 @@
             header: true,           // La première ligne contient les titres
             dynamicTyping: true,    // Convertit les nombres automatiquement
             skipEmptyLines: true,
-            complete: function(results) {
+            complete: function (results) {
                 console.log("Données brutes chargées :", results.data);
                 // On nettoie les données (on garde celles qui ont un nom et un pourcentage valide)
                 rawData = results.data.filter(row => row[COL_NAME_COMPANY] && typeof row[COL_NAME_FEMALE_PCT] === 'number');
-                
+
                 // Initialisation : on lance le premier affichage
                 updateDataAndChart();
             },
-            error: function(err) { alert("Erreur de chargement CSV. Vérifiez le chemin ou la console (F12)."); }
+            error: function (err) { alert("Erreur de chargement CSV. Vérifiez le chemin ou la console (F12)."); }
         });
 
         // --- ÉTAPE 2 : Gestion des interactions (Écouteurs d'événements) ---
-        
+
         // Interaction 1 : Changement du Select (Top 10/20)
         document.getElementById('topNSelect').addEventListener('change', updateDataAndChart);
 
         // Interaction 2 : Clic sur le bouton (Changer de type de graphique)
-        document.getElementById('toggleViewBtn').addEventListener('click', function() {
+        document.getElementById('toggleViewBtn').addEventListener('click', function () {
             isScatterMode = !isScatterMode; // On inverse l'état
             this.textContent = isScatterMode ? "Revenir aux Barres Empilées" : "Passer en mode Nuage de Points";
             updateDataAndChart(); // On met à jour le graphique
@@ -184,8 +227,8 @@
                 myChart.options = optionsConfig;
                 myChart.data = dataConfig;
                 // On change le type global (nécessaire pour la transition bar <-> scatter)
-                myChart.config.type = type; 
-                myChart.update({duration: 800, easing: 'easeInOutQuart'}); // Animation fluide
+                myChart.config.type = type;
+                myChart.update({ duration: 800, easing: 'easeInOutQuart' }); // Animation fluide
             } else {
                 // Sinon, on le crée pour la première fois
                 myChart = new Chart(ctx, {
@@ -197,16 +240,16 @@
         }
 
         // --- ÉTAPE 4 : Configurations des options du graphique ---
-        
+
         function getStackedBarOptions() {
             return {
                 responsive: true, maintainAspectRatio: false,
                 scales: {
-                    x: { 
+                    x: {
                         stacked: true, // Active l'empilement horizontal
                         title: { display: true, text: 'Entreprises' }
                     },
-                    y: { 
+                    y: {
                         stacked: true, // Active l'empilement vertical
                         beginAtZero: true, max: 100, // L'axe Y va de 0 à 100%
                         title: { display: true, text: 'Répartition (%)' }
@@ -238,7 +281,7 @@
                     tooltip: {
                         // Tooltip personnalisé pour afficher le nom de l'entreprise en Scatter
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 const pointData = context.raw;
                                 return `${pointData.companyName}: ${pointData.y.toFixed(1)}% de femmes`;
                             }
@@ -249,4 +292,5 @@
         }
     </script>
 </body>
+
 </html>
