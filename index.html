@@ -81,6 +81,7 @@
 <body>
 
     <h1>La part des femmes dans la Tech</h1>
+     <h2>La diversité du genre dans les équipes d'ingénieurs selon les entreprises américaines</h2>
     <p>Exploration interactive des données</p>
 
     <div class="controls-container">
@@ -177,13 +178,15 @@
                         data: currentData.map((d, index) => ({
                             x: index + 1, // Rang (1er, 2ème...) sur l'axe X pour l'étaler
                             y: d[COL_NAME_FEMALE_PCT], // Pourcentage sur l'axe Y
-                            companyName: d[COL_NAME_COMPANY] // Info cachée pour le tooltip
+                             r: d[COL_NAME_TOTAL_ENG] ? Math.sqrt(d[COL_NAME_TOTAL_ENG]) / 10: 35,
+                            companyName: d[COL_NAME_COMPANY], // Info cachée pour le tooltip
+                            totalStaff: d[COL_NAME_TOTAL_ENG] || 0
+            
+                            
                         })),
                         backgroundColor: 'rgba(255, 99, 132, 0.7)', // Rose/Rouge
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        pointRadius: 8,
-                        pointHoverRadius: 12,
-                        type: 'scatter' // Force le type scatter pour ce dataset
+                        type: 'bubble' // Force le type scatter pour ce dataset
                     }]
                 };
                 chartOptionsConfig = getScatterOptions();
